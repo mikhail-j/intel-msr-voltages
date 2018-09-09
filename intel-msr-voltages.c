@@ -47,9 +47,10 @@ int main(int argc, char* argv[]) {
 	//0 = success
 	//1 = unable to set all user specified voltage offsets
 	//2 = found non-Intel CPU
-	//3 = no root permissions detected
-	//4 = msr-tools not found
-	//5 = configuration file not found
+	//3 = 'msr' kernel module not loaded
+	//4 = no root permissions detected
+	//5 = msr-tools not found
+	//6 = configuration file not found
 	int exit_status = 0;
 
 	int option_char;
@@ -78,25 +79,30 @@ int main(int argc, char* argv[]) {
 
 	if (is_intel_cpu()) {
 		if (msr_tools_exists()) {
-			if ((getuid() == 0) && (geteuid() == 0)) {
-				int set_config_status = set_voltage_offset_configuration(voltage_planes);
-				if (set_config_status == 0) {
-					printf("intel-msr-voltages: voltage offset configuration was set successfully!\n");
-				}
-				else if (set_config_status == -1) {
-					exit_status = 5;
+			if (check_msr_module() == 0) {
+				if ((getuid() == 0) && (geteuid() == 0)) {
+					int set_config_status = set_voltage_offset_configuration(voltage_planes);
+					if (set_config_status == 0) {
+						printf("intel-msr-voltages: voltage offset configuration was set successfully!\n");
+					}
+					else if (set_config_status == -1) {
+						exit_status = 6;
+					}
+					else {
+						exit_status = 1;
+					}
 				}
 				else {
-					exit_status = 1;
+					fprintf(stderr, "intel-msr-voltages: error: msr-tools require root permissions!\n");
+					exit_status = 4;
 				}
 			}
 			else {
-				fprintf(stderr, "intel-msr-voltages: error: msr-tools require root permissions!\n");
 				exit_status = 3;
 			}
 		}
 		else {
-			exit_status = 4;
+			exit_status = 5;
 		}
 	}
 	else {
@@ -462,4 +468,29 @@ void usage() {
 				"  -V, --version  Output version information and exit\n"
 				"\n");
 	return;
+}
+
+int check_msr_module() {
+	int status = 0;
+	struct stat msr_module_status;
+	int stat_result = stat("/dev/cpu/0/msr", &msr_module_status);
+	FILE* load_msr_module_output;
+	char* current_line = malloc(100 * sizeof(char));
+
+	//load msr kernel module if possible
+	if (stat_result != 0) {
+		load_msr_module_output = popen("modprobe msr", "r");
+		while (fgets(current_line, 100, load_msr_module_output) != NULL) {}
+		int load_msr_module_popen_exit_code = WEXITSTATUS(pclose(load_msr_module_output));
+
+		if (load_msr_module_popen_exit_code != 0) {
+			fprintf(stderr, "intel-msr-voltages: error: kernel module 'msr' failed to load!\n");
+			status = -1;
+		}
+	}
+
+	//free allocated variables
+	free(current_line);
+
+	return status;
 }

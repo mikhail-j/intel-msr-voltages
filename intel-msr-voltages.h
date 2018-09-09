@@ -42,4 +42,6 @@ int read_voltage_offset_configuration(char* filepath, double voltages[]);
 
 int set_voltage_offset_configuration(double voltages[]);
 
-void usage(void);
+void usage();
+
+int check_msr_module();
