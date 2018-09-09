@@ -35,6 +35,8 @@ Run `make` to build the application.
 ## Cleanup the previous build
 Run `make clean` to cleanup the previous build of the application.
 
+This is not required if `make` was successful (no errors during compilation).
+
 ## Testing Voltage Offsets
 By default, the application will try to read the voltage offsets from `/etc/intel-msr-voltages.conf` in millivolt (mV) units.
 
