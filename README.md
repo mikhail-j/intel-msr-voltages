@@ -25,7 +25,7 @@ git clone git://github.com/mikhail-j/intel-msr-voltages.git
 ```
 
 ## Overvolting/Undervolting Information
-As [tiziw](https://github.com/tiziw/iuvolt) suggests, more information can be found at [mihic's linux-intel-undervolt](https://github.com/mihic/linux-intel-undervolt) on voltage planes.
+As [tiziw](https://github.com/tiziw/iuvolt) suggests, more information can be found at [mihic's linux-intel-undervolt github project](https://github.com/mihic/linux-intel-undervolt) on voltage planes.
 
 The voltage offsets can either be positive or negative numbers.
 
