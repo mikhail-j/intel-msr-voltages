@@ -1,0 +1,17 @@
+[Unit]
+Description=Intel MSR Voltage Offsets Service
+After=systemd-modules-load.target
+After=hibernate.target
+After=suspend.target
+After=sleep.target
+After=hybrid-sleep.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/intel-msr-voltages
+KillMode=mixed
+StandardOutput=syslog
+StandardError=inherit
+
+[Install]
+WantedBy=multi-user.target
