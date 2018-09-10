@@ -6,7 +6,7 @@ I am not responsible for any damage you cause by following the instructions belo
 
 This method of setting voltage offsets has not been thoroughly tested.
 
-There is no official documentation for the machine specific register (MSR) interface.
+There is no official documentation for the model-specific register (MSR) interface.
 
 All public knowledge on the MSR `0x150` can be found in the [linux-intel-undervolt github project](https://github.com/mihic/linux-intel-undervolt)
 
